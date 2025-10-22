@@ -2,13 +2,13 @@ replicaCount: 1
 
 app:
   image: kamasanirohith/zulip
-  tag: latest
+  tag: 
   port: 9991
   nodePort: 31011
 
 postgres:
   image: kamasanirohith/zulip-pg
-  tag: latest
+  tag: 
   user: zulip
   password: zulip123        # set a secure password
   database: zulip
