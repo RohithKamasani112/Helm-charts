@@ -10,7 +10,7 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ include "n8n.name" . }}
+        app: n8n
     spec:
       containers:
         - name: n8n
