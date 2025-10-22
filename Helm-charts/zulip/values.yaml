@@ -1,0 +1,21 @@
+replicaCount: 1
+
+app:
+  image: kamasanirohith/zulip
+  tag: latest
+  port: 9991
+  nodePort: 31011
+
+postgres:
+  image: kamasanirohith/zulip-pg
+  tag: latest
+  user: zulip
+  password: zulip123        # set a secure password
+  database: zulip
+  port: 5432
+
+# Optional Redis if you want to include it
+redis:
+  enabled: false
+  image: redis:7
+  port: 6379

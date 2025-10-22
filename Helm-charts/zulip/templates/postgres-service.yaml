@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: zulip-postgres
+spec:
+  ports:
+    - port: {{ .Values.postgres.port }}
+      targetPort: {{ .Values.postgres.port }}
+  selector:
+    app: zulip-postgres

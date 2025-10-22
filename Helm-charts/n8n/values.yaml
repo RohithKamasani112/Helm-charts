@@ -1,0 +1,19 @@
+replicaCount: 1
+
+image:
+  repository: kamasanirohith/n8n
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: NodePort
+  port: 5678
+  targetPort: 5678
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

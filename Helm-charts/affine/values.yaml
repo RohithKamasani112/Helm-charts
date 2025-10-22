@@ -1,0 +1,18 @@
+replicaCount: 1
+
+app:
+  image: kamasanirohith/affine
+  tag: latest
+  port: 3010
+  nodePort: 31010
+
+postgres:
+  image: pgvector/pgvector:pg16
+  user: affine
+  password: affine123       # Set a secure password
+  database: affine
+  port: 5432
+
+redis:
+  image: redis:7
+  port: 6379
