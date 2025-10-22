@@ -1,8 +1,7 @@
 replicaCount: 1
 
 app:
-  image: kamasanirohith/affine
-  tag: 
+  image: kamasanirohith/affine:canary
   port: 3010
   nodePort: 31010
 
