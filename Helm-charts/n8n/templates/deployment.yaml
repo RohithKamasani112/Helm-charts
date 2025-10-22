@@ -1,22 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "n8n.fullname" . }}
+  name: n8n
   labels:
-    {{- include "n8n.labels" . | nindent 4 }}
+    app: n8n
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ include "n8n.name" . }}
+      app: n8n
   template:
     metadata:
       labels:
-        app: {{ include "n8n.name" . }}
+        app: n8n
     spec:
       containers:
         - name: n8n
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.service.targetPort }}
           resources: {{- toYaml .Values.resources | nindent 12 }}
