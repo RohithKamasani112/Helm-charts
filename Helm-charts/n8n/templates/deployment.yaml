@@ -8,7 +8,7 @@ spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ include "n8n.name" . }}
+      app: n8n
   template:
     metadata:
       labels:
