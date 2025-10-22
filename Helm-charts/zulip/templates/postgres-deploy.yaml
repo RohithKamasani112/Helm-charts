@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: postgres
-          image: "{{ .Values.postgres.image }}:{{ .Values.postgres.tag }}"
+          image: "{{ .Values.postgres.image }}"
           env:
             - name: POSTGRES_USER
               value: {{ .Values.postgres.user }}

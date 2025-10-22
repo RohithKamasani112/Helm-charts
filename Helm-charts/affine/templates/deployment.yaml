@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: affine
-          image: "{{ .Values.app.image }}:{{ .Values.app.tag }}"
+          image: "{{ .Values.app.image }}"
           ports:
             - containerPort: {{ .Values.app.port }}
           env:
