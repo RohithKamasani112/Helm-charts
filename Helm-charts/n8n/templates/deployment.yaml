@@ -20,4 +20,74 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.service.targetPort }}
+          env:
+            - name: N8N_PORT
+              value: "{{ .Values.service.targetPort }}"
+            - name: N8N_PROTOCOL
+              value: "{{ .Values.n8n.protocol | default "http" }}"
+            - name: N8N_HOST
+              value: "{{ .Values.n8n.host | default "0.0.0.0" }}"
+            - name: N8N_ENCRYPTION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: n8n-secrets
+                  key: encryption-key
+
+            # ✅ Local SQLite DB (no external DB needed)
+            - name: DB_TYPE
+              value: "sqlite"
+            - name: DB_SQLITE_DATABASE
+              value: "/home/node/.n8n/database.sqlite"
+
+            # Optional: Basic Auth
+            {{- if .Values.n8n.basicAuth.enabled }}
+            - name: N8N_BASIC_AUTH_ACTIVE
+              value: "true"
+            - name: N8N_BASIC_AUTH_USER
+              valueFrom:
+                secretKeyRef:
+                  name: n8n-secrets
+                  key: basic-auth-user
+            - name: N8N_BASIC_AUTH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: n8n-secrets
+                  key: basic-auth-password
+            {{- else }}
+            - name: N8N_BASIC_AUTH_ACTIVE
+              value: "false"
+            {{- end }}
+
+            - name: N8N_LOG_LEVEL
+              value: "{{ .Values.n8n.logLevel | default "info" }}"
+            - name: GENERIC_TIMEZONE
+              value: "{{ .Values.n8n.timezone | default "UTC" }}"
+            - name: TZ
+              value: "{{ .Values.n8n.timezone | default "UTC" }}"
+
+          volumeMounts:
+            - name: n8n-data
+              mountPath: /home/node/.n8n
+
           resources: {{- toYaml .Values.resources | nindent 12 }}
+
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: {{ .Values.service.targetPort }}
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: {{ .Values.service.targetPort }}
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+      volumes:
+        - name: n8n-data
+          persistentVolumeClaim:
+            claimName: n8n-pvc
