@@ -9,5 +9,8 @@ spec:
   ports:
     - port: {{ .Values.service.port }}
       targetPort: {{ .Values.service.targetPort }}
+      {{- if eq .Values.service.type "NodePort" }}
+      nodePort: 30567
+      {{- end }}
   selector:
     app: n8n
