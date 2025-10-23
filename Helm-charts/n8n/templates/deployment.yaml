@@ -14,6 +14,10 @@ spec:
       labels:
         app: n8n
     spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
       containers:
         - name: n8n
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -27,50 +31,20 @@ spec:
               value: "{{ .Values.n8n.protocol | default "http" }}"
             - name: N8N_HOST
               value: "{{ .Values.n8n.host | default "0.0.0.0" }}"
-            - name: N8N_ENCRYPTION_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: n8n-secrets
-                  key: encryption-key
-
-            # ✅ Local SQLite DB (no external DB needed)
+            - name: N8N_SECURE_COOKIE
+              value: "false"
             - name: DB_TYPE
               value: "sqlite"
             - name: DB_SQLITE_DATABASE
               value: "/home/node/.n8n/database.sqlite"
-
-            # Optional: Basic Auth
-            {{- if .Values.n8n.basicAuth.enabled }}
-            - name: N8N_BASIC_AUTH_ACTIVE
-              value: "true"
-            - name: N8N_BASIC_AUTH_USER
-              valueFrom:
-                secretKeyRef:
-                  name: n8n-secrets
-                  key: basic-auth-user
-            - name: N8N_BASIC_AUTH_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: n8n-secrets
-                  key: basic-auth-password
-            {{- else }}
-            - name: N8N_BASIC_AUTH_ACTIVE
-              value: "false"
-            {{- end }}
-
-            - name: N8N_LOG_LEVEL
-              value: "{{ .Values.n8n.logLevel | default "info" }}"
             - name: GENERIC_TIMEZONE
               value: "{{ .Values.n8n.timezone | default "UTC" }}"
             - name: TZ
               value: "{{ .Values.n8n.timezone | default "UTC" }}"
-
           volumeMounts:
             - name: n8n-data
               mountPath: /home/node/.n8n
-
           resources: {{- toYaml .Values.resources | nindent 12 }}
-
           livenessProbe:
             httpGet:
               path: /healthz
@@ -89,5 +63,9 @@ spec:
             failureThreshold: 3
       volumes:
         - name: n8n-data
+          {{- if .Values.persistence.enabled }}
           persistentVolumeClaim:
-            claimName: n8n-pvc
+            claimName: {{ .Values.persistence.existingClaim }}
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
