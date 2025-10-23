@@ -1,14 +1,16 @@
 replicaCount: 1
 
 app:
-  image: kamasanirohith/affine:canary
+  repository: kamasanirohith/affine
+  tag: canary-latest
   port: 3010
   nodePort: 31010
+  pullPolicy: IfNotPresent
 
 postgres:
   image: pgvector/pgvector:pg16
   user: affine
-  password: affine123       # Set a secure password
+  password: affine123
   database: affine
   port: 5432
 
