@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
         - name: affine
-          image: "{{ .Values.app.image }}"
+          image: "{{ .Values.app.repository }}:{{ .Values.app.tag }}"
+          imagePullPolicy: {{ .Values.app.pullPolicy | default "IfNotPresent" }}
           ports:
             - containerPort: {{ .Values.app.port }}
           env:
